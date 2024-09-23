@@ -4,7 +4,7 @@
 
 body{
     background-color: black;
-    background-image: url("./assets/download.jpg");
+    background-image: url("../assets/download.jpg");
     height: 100vh;
     display: flex;
     justify-content: center;
