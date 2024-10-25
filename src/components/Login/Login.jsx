@@ -1,11 +1,10 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
-import React, { useState, useEffect } from 'react'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import React, { useState } from 'react'
 import {toast} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { auth, db } from '../../lib/firebase';
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import upload from '../../lib/upload';
-import { useUserStore } from '../../lib/userStore';
 
 
 const Login = () => {
@@ -13,7 +12,6 @@ const Login = () => {
     const [toggle, setToggle] = useState("Sign In");
     const [loading,setLoading] = useState(false)
 
-    const { fetchUserInfo } = useUserStore(); 
     const handleChangeAvatar = (e) =>{
        if(e.target.files[0]){
         setAvatar({
@@ -23,15 +21,6 @@ const Login = () => {
        }
     }
 
-    useEffect(()=>{
-      const unSub = onAuthStateChanged(auth, (user)=>{
-        fetchUserInfo(user?.uid)
-      });
-  
-      return () =>{
-        unSub();
-      };
-    }, [fetchUserInfo]);
     
     const handleSignIn = async (e) => {
       e.preventDefault();
@@ -49,16 +38,12 @@ const Login = () => {
       }
     
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-    // Directly call fetchUserInfo with the new user UID
-      fetchUserInfo(userCredential.user.uid);
+        await signInWithEmailAndPassword(auth, email, password);
       } catch (err) {
         console.log(err);
         toast.error(err.message);
       } finally {
         setLoading(false);
-        
       }
     };
 
